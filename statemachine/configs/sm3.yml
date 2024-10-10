@@ -1,0 +1,73 @@
+sm3:
+  id: 2
+  name: shop_1500_get_150_next
+  desc: 'Our first streak offer sm'
+  granularity: ['customer_id', 'offer_id']
+
+  states:
+    - name: pre_allocated
+      is_active: False
+      action:
+        type: request_lpro_allocation
+    - name: hurdle_completed
+      is_active: False
+    - name: reminder1
+      is_active: False
+    - name: allocated
+      is_active: True
+    - name: reminder2
+      is_active: True
+    - name: redeemed
+      is_active: True
+    - name: expired
+      is_active: False
+
+  transitions:
+    - from_state: [ pre_allocated, hurdle_completed, reminder1, allocated, reminder2, redeemed ]
+      to_state: expired
+      condition:
+        type: relative_time
+        params:
+          minutes: 8
+    - from_state: pre_allocated
+      to_state: reminder1
+      condition:
+        type: relative_time
+        params:
+          minutes: 8
+      action:
+        type: send_communication
+        params:
+          planned: False
+          action_id: AC_100
+    - from_state: [ pre_allocated, reminder1 ]
+      to_state: hurdle_completed
+      condition:
+        type: relative_time
+        params:
+          minutes: 2
+    - from_state: hurdle_completed
+      to_state: allocated
+      condition:
+        type: lpro_ok
+      action:
+        type: send_communication
+        params:
+          planned: True
+          action_id: AC_99
+    - from_state: allocated
+      to_state: reminder2
+      condition:
+        type: relative_time
+        params:
+          minutes: 2
+    - from_state: [allocated, reminder2]
+      to_state: redeemed
+      condition:
+        type: redemption
+    - from_state: [ expired, reminder1, hurdle_completed, allocated, reminder2, redeemed ]
+      to_state: pre_allocated
+      condition:
+        type: relative_time
+        params:
+          minutes: 12

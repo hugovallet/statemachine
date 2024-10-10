@@ -1,0 +1,60 @@
+files: 'statemachine|tests|docs'
+default_language_version:
+    python: python3
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v2.1.1
+    hooks:
+      - id: autoflake
+        args: [
+          '--in-place',
+          '--expand-star-imports',
+          '--remove-all-unused-imports',
+          '--remove-unused-variable',
+          '--remove-duplicate-keys',
+          '--ignore-init-module-imports'
+        ]
+
+  - repo: https://github.com/asottile/seed-isort-config
+    rev: v2.2.0
+    hooks:
+      - id: seed-isort-config
+        args: [
+          '--application-directories=statemachine/:tests/'
+        ]
+
+  - repo: https://github.com/timothycrosley/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        additional_dependencies: [toml]
+        args: ["--profile", "black"]
+
+  - repo: https://github.com/psf/black
+    rev: 23.3.0
+    hooks:
+      - id: black
+        language_version: python3
+        types_or: [python, pyi]
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 6.0.0
+    hooks:
+      - id: flake8
+        args: [--exit-zero]
+        verbose: true
+
+  - repo: https://github.com/pycqa/pylint
+    rev: v3.0.0a6
+    hooks:
+      - id: pylint
+        args: [--rcfile, .pylintrc, --fail-under, "8.0", statemachine]
+        pass_filenames: false

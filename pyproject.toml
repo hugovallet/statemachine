@@ -1,0 +1,29 @@
+[tool.black]
+line-length=88
+
+[tool.isort]
+line_length=88
+atomic=true
+force_grid_wrap=0
+include_trailing_comma=true
+lines_after_imports=2
+lines_between_types=0
+multi_line_output=3
+skip=["conf.py"]
+not_skip="__init__.py"
+use_parentheses=true
+known_first_party=["galileo", "hyperflow", "persoflow", "tests"]
+# auto-populated by `seed-isort-config`
+known_third_party=["airflow", "dask", "graphviz", "matplotlib", "mockito", "numpy", "omegaconf", "pandas", "pydantic", "pytest", "statemachine"]
+
+[tool.mypy]
+allow_redefinition=true
+ignore_missing_imports=true
+implicit_reexport=true
+show_error_codes=true
+strict_optional=false
+pretty=true
+python_version=3.8
+cache_dir=".cache/mypy/"
+no_implicit_optional=true
+check_untyped_defs=true

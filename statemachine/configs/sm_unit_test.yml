@@ -1,0 +1,46 @@
+sm1:
+  id: 0
+  name: state_machine_0
+  desc: 'a state machine to manage simple offers'
+  granularity: ['customer_id', 'offer_id']
+
+  states:
+    - name: pre_allocated
+      is_active: False
+    - name: lpro_msg_sent
+      is_active: False
+    - name: allocated
+      is_active: True
+    - name: redeemed
+      is_active: True
+    - name: expired
+      is_active: False
+
+  transitions:
+    - from_state: pre_allocated
+      to_state: lpro_msg_sent
+      condition:
+        type: relative_time
+        params:
+          minutes: 2
+      action:
+        type: request_lpro_allocation
+    - from_state: lpro_msg_sent
+      to_state: allocated
+      condition:
+        type: lpro_ok
+      action:
+        type: send_communication
+        params:
+          planned: True
+          action_id: AC_99
+    - from_state: allocated
+      to_state: redeemed
+      condition:
+        type: redemption
+    - from_state: [pre_allocated, lpro_msg_sent, allocated, redeemed]
+      to_state: expired
+      condition:
+        type: relative_time
+        params:
+          minutes: 6

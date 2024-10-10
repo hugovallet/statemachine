@@ -1,0 +1,14 @@
+apache-airflow
+jupyter
+pydantic
+pytest
+omegaconf
+pre-commit
+graphviz
+pandas
+pandera
+pyarrow
+mockito
+dask
+matplotlib
+

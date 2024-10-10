@@ -1,0 +1,3 @@
+[run]
+source = statemachine/
+omit = *configs*,*dags*,*queries*,*__main__.py,*__init__.py,*_version.py,*cli.py

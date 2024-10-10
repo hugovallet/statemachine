@@ -1,0 +1,57 @@
+sm2:
+  id: 1
+  name: state_machine_1
+  desc: 'a state machine to manage simple offers with reminders'
+  granularity: ['customer_id', 'offer_id']
+
+  states:
+    - name: pre_allocated
+      is_active: False
+      action:
+        type: request_lpro_allocation
+    - name: allocated
+      is_active: True
+    - name: reminder
+      is_active: True
+    - name: redeemed
+      is_active: True
+    - name: expired
+      is_active: False
+
+  transitions:
+    - from_state: [ pre_allocated, allocated, reminder, redeemed ]
+      to_state: expired
+      condition:
+        type: relative_time
+        params:
+          minutes: 8
+    - from_state: pre_allocated
+      to_state: allocated
+      condition:
+        type: lpro_ok
+      action:
+        type: send_communication
+        params:
+          planned: True
+          action_id: AC_99
+    - from_state: allocated
+      to_state: reminder
+      condition:
+        type: relative_time
+        params:
+          minutes: 2
+      action:
+        type: send_communication
+        params:
+          planned: True
+          action_id: AC_99
+    - from_state: [allocated, reminder]
+      to_state: redeemed
+      condition:
+        type: redemption
+    - from_state: [ expired, lpro_msg_sent, allocated, redeemed ]
+      to_state: pre_allocated
+      condition:
+        type: relative_time
+        params:
+          minutes: 12
